@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'realm-android'
 apply plugin: 'com.getkeepsafe.dexcount'
 
@@ -14,13 +15,23 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         setProperty("archivesBaseName", "Countries-v$versionName-b$versionCode")
-        buildConfigField "String", "BASE_URL", "\"https://restcountries.eu/\""
     }
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        devBackend {
+            applicationIdSuffix ".dev"
+            resValue "string", "app_name", "Countries Dev"
+            buildConfigField "String", "BASE_URL", "\"https://restcountries.eu/\""
+        }
+        productionBackend {
+            resValue "string", "app_name", "Countries"
+            buildConfigField "String", "BASE_URL", "\"https://restcountries.eu/\""
         }
     }
     compileOptions {
@@ -41,6 +52,10 @@ android {
         exclude 'lib/mips/librealm-jni.so'
         exclude 'lib/x86_64/librealm-jni.so'
     }
+}
+
+retrolambda {
+    javaVersion JavaVersion.VERSION_1_6
 }
 
 ext.supportLibVersion = '25.3.1'
@@ -86,6 +101,8 @@ dependencies {
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.5.1'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
